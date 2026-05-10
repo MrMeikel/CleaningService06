@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light only">
+<meta name="theme-color" content="#fdfbf5">
+<title>Cleaning Co. — Premium Cleaning Services Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=JetBrains+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { color-scheme: light only; --ink:#0d1f1a; --moss:#1f5d44; --moss-bright:#2d8862; --mint:#c8e6d0; --cream:#faf6ed; --bg:#fdfbf5; --gold:#d4a93c; --line:rgba(13,31,26,0.12); --line-strong:rgba(13,31,26,0.2); --shadow-sm:0 2px 12px rgba(13,31,26,0.06); --shadow-md:0 8px 32px rgba(13,31,26,0.1); --shadow-lg:0 20px 60px rgba(13,31,26,0.15); }
+  @media (prefers-color-scheme: dark) { :root { color-scheme: light only; } }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; background:#fdfbf5 !important; color-scheme:light only; font-size:87.5%; }
+  @media (min-width: 1400px) { html { font-size:81.25%; } }
+  @media (min-width: 1800px) { html { font-size:75%; } }
+  body { font-family:'Manrope',sans-serif; background:#fdfbf5 !important; color:#0d1f1a !important; overflow-x:hidden; -webkit-text-size-adjust:100%; -webkit-font-smoothing:antialiased; }
+  .mono { font-family:'JetBrains Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; }
+
+  .placeholder { background:#fff8e6; border:1.5px dashed #d4a93c; border-radius:8px; padding:0.4rem 0.7rem; color:#8a6d20; font-style:italic; font-weight:600; font-size:0.85em; display:inline-block; }
+  .placeholder-block { background:#fff8e6; border:2px dashed #d4a93c; border-radius:16px; padding:1.5rem; text-align:center; color:#8a6d20; }
+  .placeholder-block strong { display:block; font-family:'Fraunces',serif; font-size:1.05rem; margin-bottom:0.3rem; color:#6e561a; font-style:italic; }
+  .placeholder-block p { font-size:0.85rem; line-height:1.5; font-weight:500; }
+
+  /* ===== INTRO LOADER (broom sweeps screen) ===== */
+  .intro-loader {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #fdfbf5;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+    pointer-events: all;
+  }
+  .intro-broom {
+    font-size: 6rem;
+    position: absolute;
+    left: -150px; top: 50%;
+    transform: translateY(-50%) rotate(-15deg);
+    animation: introSweep 2s cubic-bezier(0.5,0,0.3,1) forwards;
+    z-index: 2;
+  }
+  @keyframes introSweep {
+    0% { left: -150px; transform: translateY(-50%) rotate(-15deg); }
+    50% { transform: translateY(-50%) rotate(-15deg) scale(1.1); }
+    100% { left: calc(100% + 150px); transform: translateY(-50%) rotate(-15deg); }
+  }
+  .intro-cover {
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, #d4a93c 0%, #2d8862 50%, #1f5d44 100%);
+    transform: translateX(0);
+    animation: introUncover 2s cubic-bezier(0.5,0,0.3,1) forwards;
+    z-index: 1;
+  }
+  @keyframes introUncover {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(101%); }
+  }
+  .intro-dust {
+    position: absolute;
+    width: 8px; height: 8px;
+    background: #d4a93c;
+    border-radius: 50%;
+    z-index: 1;
+    opacity: 0;
+  }
+  .intro-loader.done {
+    animation: introFadeOut 0.4s ease forwards;
+    animation-delay: 1.8s;
+  }
+  @keyframes introFadeOut {
+    to { opacity: 0; pointer-events: none; }
+  }
+
+  /* ===== CUSTOM BROOM CURSOR ===== */
+  .broom-cursor {
+    position: fixed;
+    width: 40px; height: 40px;
+    pointer-events: none;
+    z-index: 99999;
+    font-size: 1.8rem;
+    transition: transform 0.1s ease, opacity 0.3s;
+    transform: translate(-50%, -50%) rotate(-25deg);
+    will-change: transform;
+    display: none;
+  }
+  .broom-cursor.active { display: block; }
+  .broom-cursor.clicking { transform: translate(-50%, -50%) rotate(-45deg) scale(1.2); }
+  .cursor-dust {
+    position: fixed;
+    width: 4px; height: 4px;
+    background: #d4a93c;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    opacity: 0;
+  }
+  /* Hide custom cursor on touch devices */
+  @media (hover: none) {
+    .broom-cursor { display: none !important; }
+  }
+
+  .demo-banner { background:linear-gradient(90deg,#d4a93c,#b8902f); color:#0d1f1a; padding:0.5rem 1rem; text-align:center; font-size:0.78rem; font-weight:700; position:fixed; top:0; left:0; right:0; z-index:102; font-family:'JetBrains Mono',monospace; letter-spacing:0.05em; }
+  .demo-banner span { animation:blink 2s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.6;} }
+
+  .announcement { background:#0d1f1a; color:#faf6ed; padding:0.6rem 1rem; text-align:center; font-size:0.78rem; font-weight:500; position:fixed; top:0; left:0; right:0; z-index:101; }
+  @media (prefers-color-scheme: dark) { .announcement { background:#0d1f1a !important; color:#faf6ed !important; } }
+  nav { position:fixed; top:36px; left:0; right:0; z-index:100; padding:1rem 1.2rem; display:flex; justify-content:space-between; align-items:center; background:rgba(253,251,245,0.95); backdrop-filter:blur(20px); border-bottom:1px solid var(--line); transition:all 0.3s; }
+  nav.scrolled { box-shadow:var(--shadow-sm); }
+  .logo { font-family:'Fraunces',serif; font-weight:700; font-size:1.3rem; letter-spacing:-0.02em; color:#0d1f1a; display:flex; align-items:center; gap:0.5rem; text-decoration:none; }
+  .logo-mark { width:32px; height:32px; background:#1f5d44; border-radius:8px; display:grid; place-items:center; color:#faf6ed; font-size:1.05rem; font-weight:700; transition:transform 0.3s; }
+  .logo:hover .logo-mark { transform:rotate(-15deg); }
+  .logo span { color:#1f5d44; font-style:italic; }
+  .nav-links { display:flex; gap:1.2rem; align-items:center; }
+  .nav-links a:not(.cta-nav) { color:#0d1f1a; text-decoration:none; font-size:0.88rem; font-weight:600; position:relative; transition:color 0.3s; }
+  .nav-links a:not(.cta-nav)::after { content:''; position:absolute; bottom:-4px; left:0; width:0; height:2px; background:#1f5d44; transition:width 0.3s; }
+  .nav-links a:not(.cta-nav):hover::after { width:100%; }
+  .lang-switch { display:flex; gap:0.2rem; font-family:'JetBrains Mono',monospace; font-size:0.72rem; border:1px solid var(--line-strong); border-radius:100px; padding:0.2rem; background:#ffffff; }
+  .lang-switch button { border:none; background:transparent; padding:0.3rem 0.65rem; cursor:pointer; border-radius:100px; font-family:inherit; font-size:inherit; color:#0d1f1a; font-weight:600; transition:all 0.3s; }
+  .lang-switch button.active { background:#0d1f1a; color:#faf6ed; }
+  .cta-nav { background:#1f5d44; color:#ffffff !important; padding:0.6rem 1.1rem; border-radius:100px; font-size:0.82rem; font-weight:700; text-decoration:none; transition:all 0.3s; position:relative; overflow:hidden; }
+  .cta-nav::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent); transition:left 0.5s; }
+  .cta-nav:hover::before { left:100%; }
+  .cta-nav:hover { background:#0d1f1a; transform:translateY(-2px); }
+
+  .hero { padding:7rem 1.2rem 3rem; position:relative; max-width:1600px; margin:0 auto; background:#fdfbf5; }
+  .hero-bg { position:absolute; inset:0; background:radial-gradient(circle at 90% 10%,rgba(45,136,98,0.08),transparent 40%),radial-gradient(circle at 10% 90%,rgba(212,169,60,0.06),transparent 40%); pointer-events:none; z-index:0; }
+  .hero-grid { position:relative; z-index:1; display:grid; grid-template-columns:1.4fr 1fr; gap:3rem; align-items:center; }
+  .hero-badges { display:flex; gap:0.6rem; flex-wrap:wrap; margin-bottom:1.8rem; }
+  .badge { display:inline-flex; align-items:center; gap:0.5rem; background:#ffffff; padding:0.5rem 0.9rem; border-radius:100px; border:1px solid var(--line-strong); font-size:0.78rem; font-weight:700; box-shadow:var(--shadow-sm); color:#0d1f1a; transition:all 0.3s; }
+  .badge:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+  .badge-dot { width:8px; height:8px; background:#2d8862; border-radius:50%; animation:pulse-dot 2s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(45,136,98,0.5);} 50%{box-shadow:0 0 0 8px rgba(45,136,98,0);} }
+
+  /* Hero title with sweep-in animation */
+  .hero-title { font-family:'Fraunces',serif; font-weight:600; font-size:clamp(2.5rem,9vw,6rem); line-height:1; letter-spacing:-0.035em; color:#0d1f1a !important; }
+  .hero-title .word-line { display:block; overflow:hidden; }
+  .hero-title .word-inner { display:inline-block; transform:translateY(110%); animation:sweepUp 0.9s cubic-bezier(0.22,1,0.36,1) forwards; opacity:0; }
+  .hero-title .word-line:nth-child(1) .word-inner { animation-delay:2.0s; }
+  .hero-title .word-line:nth-child(2) .word-inner { animation-delay:2.15s; }
+  .hero-title .word-line:nth-child(3) .word-inner { animation-delay:2.3s; }
+  .hero-title .word-line:nth-child(4) .word-inner { animation-delay:2.45s; }
+  @keyframes sweepUp { to { transform:translateY(0); opacity:1; } }
+  .hero-title em { font-style:italic; font-weight:500; color:#1f5d44 !important; }
+  .hero-title .highlight { display:inline-block; position:relative; z-index:1; }
+  .hero-title .highlight::after { content:''; position:absolute; bottom:0.06em; left:-0.05em; right:-0.05em; height:0.32em; background:#d4a93c; opacity:0.65; z-index:-1; transform:skewX(-5deg) scaleX(0); transform-origin:left; animation:highlightSweep 0.6s ease forwards 3s; }
+  @keyframes highlightSweep { to { transform:skewX(-5deg) scaleX(1); } }
+
+  .hero-desc { font-size:1.05rem; line-height:1.6; color:#2a3d35 !important; max-width:540px; margin-top:1.8rem; font-weight:500; opacity:0; animation:fadeInUp 0.8s ease 2.6s forwards; }
+  @keyframes fadeInUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .hero-actions { display:flex; gap:0.8rem; flex-wrap:wrap; margin-top:2rem; opacity:0; animation:fadeInUp 0.8s ease 2.9s forwards; }
+
+  /* Premium buttons with magnetic hover */
+  .btn-primary { background:#0d1f1a; color:#ffffff; padding:1rem 1.6rem; border-radius:100px; text-decoration:none; font-weight:700; display:inline-flex; align-items:center; gap:0.5rem; transition:all 0.3s; font-size:0.92rem; border:none; cursor:pointer; box-shadow:var(--shadow-md); position:relative; overflow:hidden; }
+  .btn-primary::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(212,169,60,0.4),transparent); transform:translateX(-100%); transition:transform 0.6s; }
+  .btn-primary:hover::before { transform:translateX(100%); }
+  .btn-primary:hover { background:#1f5d44; transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+  .btn-primary span:last-child { transition:transform 0.3s; display:inline-block; }
+  .btn-primary:hover span:last-child { transform:translateX(4px); }
+  .btn-secondary { background:#ffffff; color:#0d1f1a; padding:1rem 1.6rem; border-radius:100px; text-decoration:none; font-weight:700; border:1.5px solid #0d1f1a; transition:all 0.3s; font-size:0.92rem; display:inline-flex; align-items:center; gap:0.5rem; position:relative; overflow:hidden; }
+  .btn-secondary::after { content:''; position:absolute; inset:0; background:#0d1f1a; transform:translateX(-100%); transition:transform 0.4s ease; z-index:-1; }
+  .btn-secondary:hover { color:#ffffff; }
+  .btn-secondary:hover::after { transform:translateX(0); }
+
+  /* BOOKING WIDGET */
+  .booking-card { background:#ffffff; border-radius:24px; padding:1.8rem; box-shadow:var(--shadow-lg); border:1px solid var(--line); position:relative; opacity:0; animation:fadeInScale 1s ease 2.4s forwards; }
+  @keyframes fadeInScale { from { opacity:0; transform:scale(0.95); } to { opacity:1; transform:scale(1); } }
+  .booking-header { text-align:center; margin-bottom:1.2rem; }
+  .booking-header h3 { font-family:'Fraunces',serif; font-size:1.4rem; font-weight:600; color:#0d1f1a; margin-bottom:0.2rem; }
+  .booking-header .subtitle { font-size:0.82rem; color:#1f5d44; font-weight:600; }
+  .booking-step { display:none; }
+  .booking-step.active { display:block; animation:fadeIn 0.4s ease; }
+  @keyframes fadeIn { from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+
+  .step-indicator { display:flex; gap:0.4rem; margin-bottom:1rem; justify-content:center; }
+  .step-dot { width:24px; height:4px; background:#fdfbf5; border-radius:2px; transition:all 0.4s; }
+  .step-dot.active { background:#1f5d44; width:32px; }
+  .step-dot.completed { background:#2d8862; }
+
+  .booking-label { font-family:'JetBrains Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.5rem; color:#0d1f1a; font-weight:700; display:block; }
+
+  .calendar { background:#fdfbf5; border-radius:14px; padding:1rem; border:1px solid var(--line); }
+  .calendar-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; }
+  .calendar-month { font-family:'Fraunces',serif; font-weight:600; font-size:0.95rem; color:#0d1f1a; }
+  .calendar-nav { display:flex; gap:0.3rem; }
+  .calendar-nav button { width:28px; height:28px; border-radius:50%; border:1px solid var(--line); background:#ffffff; cursor:pointer; font-size:0.85rem; color:#0d1f1a; font-weight:700; transition:all 0.2s; }
+  .calendar-nav button:hover:not(:disabled) { background:#1f5d44; color:#ffffff; border-color:#1f5d44; transform:scale(1.1); }
+  .calendar-nav button:disabled { opacity:0.3; cursor:not-allowed; }
+  .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:0.25rem; }
+  .calendar-dow { text-align:center; font-family:'JetBrains Mono',monospace; font-size:0.6rem; font-weight:700; color:#2a3d35; padding:0.3rem 0; opacity:0.7; }
+  .calendar-day { aspect-ratio:1; display:grid; place-items:center; font-size:0.82rem; font-weight:600; color:#0d1f1a; cursor:pointer; border-radius:8px; transition:all 0.2s; background:transparent; border:none; font-family:inherit; }
+  .calendar-day:hover:not(.disabled):not(.empty) { background:#c8e6d0; transform:scale(1.1); }
+  .calendar-day.disabled { color:#0d1f1a; opacity:0.3; cursor:not-allowed; }
+  .calendar-day.empty { cursor:default; }
+  .calendar-day.today { font-weight:800; color:#1f5d44; position:relative; }
+  .calendar-day.today::after { content:''; position:absolute; bottom:3px; left:50%; transform:translateX(-50%); width:4px; height:4px; background:#1f5d44; border-radius:50%; }
+  .calendar-day.selected { background:#1f5d44 !important; color:#ffffff !important; transform:scale(1.05); }
+
+  .time-slots { display:grid; grid-template-columns:repeat(3,1fr); gap:0.4rem; margin-top:1rem; }
+  .time-slot { padding:0.6rem 0.3rem; background:#fdfbf5; border:1px solid var(--line); border-radius:8px; cursor:pointer; font-size:0.78rem; font-weight:700; color:#0d1f1a; transition:all 0.2s; font-family:inherit; text-align:center; }
+  .time-slot:hover:not(.disabled) { background:#c8e6d0; border-color:#2d8862; transform:translateY(-2px); }
+  .time-slot.selected { background:#1f5d44; color:#ffffff; border-color:#1f5d44; }
+  .time-slot.disabled { opacity:0.3; cursor:not-allowed; text-decoration:line-through; }
+
+  /* ===== ENHANCED BROOM SWEEP ANIMATION ===== */
+  .input-wrap { position:relative; margin-bottom:0.7rem; }
+  .booking-input, .booking-select { width:100%; padding:0.75rem 1rem; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:0.9rem; font-weight:500; background:#ffffff; color:#0d1f1a; transition:all 0.3s; }
+  .booking-input:focus, .booking-select:focus { outline:none; border-color:#1f5d44; box-shadow:0 0 0 3px rgba(31,93,68,0.1); }
+
+  .broom-sweep {
+    position:absolute; inset:0; pointer-events:none; overflow:hidden;
+    border-radius:10px; opacity:0;
+  }
+  .broom-sweep.active { opacity:1; }
+  .broom {
+    position:absolute; top:50%; left:-100px;
+    transform:translateY(-50%) rotate(-15deg);
+    font-size:2.5rem;
+    transition:left 0.7s cubic-bezier(0.5,0,0.3,1);
+    z-index:5;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+  }
+  .broom-sweep.active .broom { left:calc(100% + 40px); }
+  .dust {
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:8px; height:8px; background:#d4a93c;
+    border-radius:50%; opacity:0;
+    box-shadow: 0 0 8px rgba(212,169,60,0.6);
+  }
+  .broom-sweep.active .dust { animation:dustFly 0.8s ease-out forwards; }
+  .broom-sweep.active .dust:nth-child(2) { animation-delay:0.05s; }
+  .broom-sweep.active .dust:nth-child(3) { animation-delay:0.1s; }
+  .broom-sweep.active .dust:nth-child(4) { animation-delay:0.15s; }
+  .broom-sweep.active .dust:nth-child(5) { animation-delay:0.2s; }
+  .broom-sweep.active .dust:nth-child(6) { animation-delay:0.25s; }
+  @keyframes dustFly {
+    0% { opacity:0.9; transform:translateY(-50%) translateX(0) scale(1); }
+    50% { opacity:1; }
+    100% { opacity:0; transform:translateY(-50%) translateX(50px) translateY(-25px) scale(0.2); }
+  }
+
+  /* Pulse on the field when sweep happens */
+  .input-wrap.sweeping .booking-input, .input-wrap.sweeping .broom-input, .input-wrap.sweeping textarea {
+    animation: fieldPulse 0.7s ease;
+  }
+  @keyframes fieldPulse {
+    0%, 100% { background: #ffffff; }
+    50% { background: #fff8e6; }
+  }
+
+  .booking-summary { background:#c8e6d0; border-radius:12px; padding:1rem; margin-bottom:1rem; }
+  .booking-summary-row { display:flex; justify-content:space-between; align-items:center; padding:0.3rem 0; font-size:0.85rem; }
+  .booking-summary-row strong { font-weight:700; color:#0d1f1a; }
+  .booking-summary-row span { color:#1f5d44; font-weight:600; }
+
+  .booking-buttons { display:flex; gap:0.5rem; margin-top:0.8rem; }
+  .booking-btn { flex:1; padding:0.85rem; border-radius:10px; font-weight:700; font-size:0.88rem; cursor:pointer; transition:all 0.3s; font-family:inherit; border:none; }
+  .booking-btn-back { background:#fdfbf5; color:#0d1f1a; border:1px solid var(--line); }
+  .booking-btn-back:hover { background:#ffffff; transform:translateX(-3px); }
+  .booking-btn-next { background:#1f5d44; color:#ffffff; }
+  .booking-btn-next:hover:not(:disabled) { background:#0d1f1a; transform:translateX(3px); }
+  .booking-btn-next:disabled { opacity:0.4; cursor:not-allowed; }
+
+  .booking-success { text-align:center; padding:1rem; }
+  .success-icon { width:60px; height:60px; background:#c8e6d0; color:#1f5d44; border-radius:50%; margin:0 auto 1rem; display:grid; place-items:center; font-size:1.8rem; animation:successPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+  @keyframes successPop { 0% { transform:scale(0); } 50% { transform:scale(1.2); } 100% { transform:scale(1); } }
+  .booking-success h4 { font-family:'Fraunces',serif; font-size:1.3rem; color:#0d1f1a; margin-bottom:0.5rem; font-weight:600; }
+  .booking-success p { font-size:0.88rem; color:#2a3d35; line-height:1.5; }
+
+  /* ===== TRUST STRIP WITH ANIMATED COUNTERS ===== */
+  .trust-strip { padding:2.5rem 1.2rem; background:#ffffff; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .trust-inner { max-width:1400px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; }
+  .trust-item { display:flex; align-items:center; gap:0.9rem; transition:transform 0.3s; }
+  .trust-item:hover { transform:translateY(-3px); }
+  .trust-icon { width:44px; height:44px; background:#c8e6d0; border-radius:12px; display:grid; place-items:center; font-size:1.3rem; flex-shrink:0; transition:transform 0.3s; }
+  .trust-item:hover .trust-icon { transform:rotate(-10deg) scale(1.1); }
+  .trust-item h4 { font-size:0.92rem; font-weight:800; margin-bottom:0.1rem; color:#0d1f1a; }
+  .trust-item p { font-size:0.78rem; color:#2a3d35; font-weight:500; }
+
+  /* ===== ANIMATED COUNTERS SECTION ===== */
+  .counters-section { padding:5rem 1.2rem; background:linear-gradient(135deg, #1f5d44, #0d1f1a); color:#faf6ed; position:relative; overflow:hidden; }
+  .counters-section::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 50%, rgba(212,169,60,0.15), transparent 60%); pointer-events:none; }
+  .counters-inner { max-width:1400px; margin:0 auto; position:relative; }
+  .counters-header { text-align:center; margin-bottom:3rem; }
+  .counters-header .mono { color:#d4a93c; margin-bottom:0.8rem; display:block; font-weight:600; }
+  .counters-header h2 { font-family:'Fraunces',serif; font-weight:600; font-size:clamp(2rem,4.5vw,3.5rem); line-height:1; letter-spacing:-0.03em; }
+  .counters-header h2 em { font-style:italic; color:#d4a93c; font-weight:500; }
+  .counters-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2rem; }
+  .counter-card { text-align:center; padding:1.5rem 1rem; }
+  .counter-icon { font-size:2.5rem; margin-bottom:1rem; display:inline-block; transition:transform 0.4s; }
+  .counter-card:hover .counter-icon { transform:rotate(-15deg) scale(1.1); }
+  .counter-number { font-family:'Fraunces',serif; font-weight:600; font-size:clamp(2.5rem,5vw,4rem); color:#d4a93c; line-height:1; margin-bottom:0.5rem; font-style:italic; display:flex; justify-content:center; align-items:baseline; gap:0.1em; }
+  .counter-suffix { font-size:0.6em; opacity:0.9; }
+  .counter-label { font-size:0.85rem; color:#c8e6d0; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
+
+  .services { padding:5rem 1.2rem; max-width:1600px; margin:0 auto; background:#fdfbf5; }
+  .section-header { display:grid; grid-template-columns:1fr 2fr; gap:3rem; margin-bottom:3rem; align-items:end; }
+  .section-header .mono { color:#1f5d44; margin-bottom:0.8rem; display:block; font-weight:600; }
+  .section-title { font-family:'Fraunces',serif; font-weight:600; font-size:clamp(2rem,5vw,3.5rem); line-height:1; letter-spacing:-0.03em; color:#0d1f1a; }
+  .section-title em { font-style:italic; color:#1f5d44; font-weight:500; }
+  .service-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; }
+  .service-card { background:#ffffff; padding:1.8rem; min-height:280px; border-radius:20px; display:flex; flex-direction:column; justify-content:space-between; transition:all 0.4s cubic-bezier(0.22,1,0.36,1); border:1px solid var(--line); box-shadow:var(--shadow-sm); position:relative; overflow:hidden; }
+  .service-card::before { content:''; position:absolute; top:-100%; left:-100%; width:200%; height:200%; background:radial-gradient(circle, rgba(212,169,60,0.1), transparent 60%); transition:all 0.6s; opacity:0; }
+  .service-card:hover::before { top:-50%; left:-50%; opacity:1; }
+  .service-card:hover { transform:translateY(-8px) rotate(-0.5deg); box-shadow:var(--shadow-lg); border-color:#1f5d44; }
+  .service-card.featured { background:#0d1f1a; color:#faf6ed; border-color:#0d1f1a; }
+  .service-card.featured h3 { color:#faf6ed; }
+  .service-card.featured p { color:#c8e6d0; }
+  .service-card.featured .service-num { color:#d4a93c; }
+  .service-card.featured .service-bottom { border-top-color:rgba(255,255,255,0.15); }
+  .service-icon-box { width:52px; height:52px; background:#c8e6d0; border-radius:14px; display:grid; place-items:center; font-size:1.5rem; margin-bottom:1.2rem; transition:transform 0.4s; position:relative; z-index:1; }
+  .service-card.featured .service-icon-box { background:rgba(212,169,60,0.2); }
+  .service-card:hover .service-icon-box { transform:rotate(-10deg) scale(1.15); }
+  .service-num { font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:#1f5d44; margin-bottom:0.4rem; display:block; font-weight:700; position:relative; z-index:1; }
+  .service-card h3 { font-family:'Fraunces',serif; font-weight:600; font-size:1.45rem; line-height:1.1; margin-bottom:0.6rem; color:#0d1f1a; position:relative; z-index:1; }
+  .service-card h3 em { font-style:italic; font-weight:500; }
+  .service-card p { font-size:0.88rem; line-height:1.55; color:#2a3d35; margin-bottom:0.8rem; font-weight:500; position:relative; z-index:1; }
+  .service-bottom { display:flex; justify-content:space-between; align-items:center; margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--line); position:relative; z-index:1; }
+  .service-arrow { width:34px; height:34px; border-radius:50%; background:#fdfbf5; display:grid; place-items:center; transition:all 0.3s; color:#0d1f1a; font-weight:700; }
+  .service-card.featured .service-arrow { background:#d4a93c; color:#0d1f1a; }
+  .service-card:hover .service-arrow { background:#1f5d44; color:#ffffff; transform:rotate(-45deg) scale(1.1); }
+
+  .process { background:#ffffff; padding:5rem 1.2rem; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .process-inner { max-width:1600px; margin:0 auto; }
+  .steps { display:grid; grid-template-columns:repeat(4,1fr); gap:1.2rem; margin-top:3rem; }
+  .step { background:#fdfbf5; padding:1.6rem; border-radius:18px; transition:all 0.4s; border:1px solid var(--line); }
+  .step:hover { transform:translateY(-8px); box-shadow:var(--shadow-md); background:#ffffff; }
+  .step-num { font-family:'Fraunces',serif; font-size:3rem; font-weight:600; color:#2d8862; font-style:italic; line-height:0.8; margin-bottom:0.8rem; transition:transform 0.3s; }
+  .step:hover .step-num { transform:scale(1.1); }
+  .step h4 { font-family:'Fraunces',serif; font-weight:600; font-size:1.15rem; margin-bottom:0.5rem; color:#0d1f1a; }
+  .step p { font-size:0.85rem; line-height:1.55; color:#2a3d35; font-weight:500; }
+
+  /* ===== ENHANCED B/A GALLERY WITH VIDEO SUPPORT ===== */
+  .gallery { padding:5rem 1.2rem; max-width:1600px; margin:0 auto; background:#fdfbf5; }
+  .ba-showcase { background:#ffffff; border-radius:24px; padding:1.5rem; box-shadow:var(--shadow-md); border:1px solid var(--line); margin-bottom:2rem; }
+  .ba-container { position:relative; width:100%; aspect-ratio:16/9; border-radius:14px; overflow:hidden; cursor:ew-resize; user-select:none; background:#0d1f1a; }
+  .ba-image-before, .ba-image-after { position:absolute; top:0; left:0; width:100%; height:100%; display:grid; place-items:center; overflow:hidden; }
+  /* Placeholder gradient backgrounds */
+  .ba-image-before { background:linear-gradient(135deg,#6e561a,#3a2d0e); color:#d4a93c; }
+  .ba-image-after { background:linear-gradient(135deg,#1f5d44,#0d1f1a); color:#c8e6d0; clip-path:inset(0 0 0 50%); }
+  /* Video / image overlays */
+  .ba-media { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  /* Position labels in their own half so they don't overlap when divider is centered */
+  .ba-image-before .ba-label { position:absolute; top:50%; left:25%; transform:translate(-50%, -50%); font-family:'Fraunces',serif; font-style:italic; font-size:1.8rem; font-weight:600; opacity:0.7; text-align:center; padding:0 1rem; white-space:nowrap; }
+  .ba-image-after .ba-label { position:absolute; top:50%; left:75%; transform:translate(-50%, -50%); font-family:'Fraunces',serif; font-style:italic; font-size:1.8rem; font-weight:600; opacity:0.7; text-align:center; padding:0 1rem; white-space:nowrap; }
+  .ba-tag-before, .ba-tag-after { position:absolute; top:1rem; padding:0.4rem 0.9rem; background:rgba(0,0,0,0.7); color:#ffffff; border-radius:100px; font-family:'JetBrains Mono',monospace; font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; backdrop-filter:blur(8px); }
+  .ba-tag-before { left:1rem; z-index:3; }
+  .ba-tag-after { right:1rem; z-index:3; }
+  .ba-divider { position:absolute; top:0; bottom:0; left:50%; width:3px; background:#ffffff; box-shadow:0 0 12px rgba(0,0,0,0.4); z-index:3; transform:translateX(-50%); }
+  .ba-handle { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:48px; height:48px; background:#ffffff; border-radius:50%; display:grid; place-items:center; box-shadow:var(--shadow-md); z-index:4; cursor:ew-resize; transition:transform 0.2s; }
+  .ba-handle:hover { transform:translate(-50%,-50%) scale(1.1); }
+  .ba-handle::before { content:'⇄'; font-size:1.3rem; color:#1f5d44; font-weight:700; }
+  .ba-info { display:flex; justify-content:space-between; align-items:center; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--line); flex-wrap:wrap; gap:1rem; }
+  .ba-info-text h4 { font-family:'Fraunces',serif; font-weight:600; font-size:1.1rem; color:#0d1f1a; }
+  .ba-info-text p { font-size:0.8rem; color:#2a3d35; font-weight:500; margin-top:0.2rem; }
+  .ba-controls { display:flex; gap:0.4rem; align-items:center; }
+  .ba-control-btn { width:32px; height:32px; background:#fdfbf5; border:1px solid var(--line); border-radius:50%; cursor:pointer; font-size:0.85rem; color:#0d1f1a; font-weight:700; transition:all 0.2s; font-family:inherit; }
+  .ba-control-btn:hover { background:#1f5d44; color:#ffffff; border-color:#1f5d44; transform:scale(1.1); }
+  .ba-video-toggle { padding:0.4rem 0.8rem; background:#fdfbf5; border:1px solid var(--line); border-radius:100px; cursor:pointer; font-size:0.7rem; color:#0d1f1a; font-weight:700; transition:all 0.2s; font-family:'JetBrains Mono',monospace; text-transform:uppercase; letter-spacing:0.05em; }
+  .ba-video-toggle:hover { background:#1f5d44; color:#ffffff; }
+  /* Category tabs for gallery folders */
+  .ba-categories { display:flex; gap:0.5rem; margin-bottom:1.5rem; flex-wrap:wrap; justify-content:center; }
+  .ba-cat-tab { padding:0.6rem 1.2rem; background:#ffffff; border:1.5px solid var(--line); border-radius:100px; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:0.72rem; font-weight:700; color:#0d1f1a; text-transform:uppercase; letter-spacing:0.05em; transition:all 0.3s; }
+  .ba-cat-tab:hover { border-color:#1f5d44; transform:translateY(-2px); }
+  .ba-cat-tab.active { background:#1f5d44; color:#ffffff; border-color:#1f5d44; }
+
+  .ba-gallery-thumbs { display:grid; grid-template-columns:repeat(3,1fr); gap:0.5rem; }
+  .ba-thumb { aspect-ratio:1; border-radius:10px; cursor:pointer; transition:all 0.3s; border:2px solid transparent; position:relative; overflow:hidden; }
+  .ba-thumb:hover { transform:scale(1.05); }
+  .ba-thumb.active { border-color:#1f5d44; transform:scale(1.05); }
+  .ba-thumb-1 { background:linear-gradient(135deg,#2d8862,#143a2c); }
+  .ba-thumb-2 { background:linear-gradient(135deg,#d4a93c,#8a7430); }
+  .ba-thumb-3 { background:linear-gradient(135deg,#c8542f,#8a3a1f); }
+  .ba-thumb-4 { background:linear-gradient(135deg,#6b8a7a,#2d6e54); }
+  .ba-thumb-5 { background:linear-gradient(135deg,#4a7c5a,#1f5d44); }
+  .ba-thumb-6 { background:linear-gradient(135deg,#9c8b3f,#6e561a); }
+  .ba-thumb-label { position:absolute; bottom:0.3rem; left:0.5rem; right:0.5rem; font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:#ffffff; font-weight:700; text-transform:uppercase; }
+  .ba-thumb-video-icon { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.5rem; color:#ffffff; opacity:0.9; }
+
+  .reviews { padding:5rem 1.2rem; max-width:1400px; margin:0 auto; background:#fdfbf5; }
+  .google-badge { display:inline-flex; align-items:center; gap:0.6rem; background:#ffffff; padding:0.7rem 1.2rem; border-radius:100px; box-shadow:var(--shadow-sm); border:1px solid var(--line); margin-bottom:2rem; }
+  .google-logo { width:18px; height:18px; flex-shrink:0; }
+  .google-rating-text { font-size:0.85rem; font-weight:700; color:#0d1f1a; }
+
+  .blog { padding:5rem 1.2rem; max-width:1400px; margin:0 auto; background:#ffffff; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .blog-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; }
+  .blog-card { background:#fdfbf5; border-radius:18px; overflow:hidden; border:1px solid var(--line); transition:all 0.4s; cursor:pointer; }
+  .blog-card:hover { transform:translateY(-8px) rotate(-0.5deg); box-shadow:var(--shadow-md); }
+  .blog-card-image { aspect-ratio:16/10; display:grid; place-items:center; font-size:3rem; color:#ffffff; transition:transform 0.4s; }
+  .blog-card:hover .blog-card-image { transform:scale(1.05); }
+  .blog-1 .blog-card-image { background:linear-gradient(135deg,#2d8862,#143a2c); }
+  .blog-2 .blog-card-image { background:linear-gradient(135deg,#d4a93c,#8a7430); }
+  .blog-3 .blog-card-image { background:linear-gradient(135deg,#c8542f,#8a3a1f); }
+  .blog-card-content { padding:1.5rem; }
+  .blog-tag { display:inline-block; background:#c8e6d0; color:#1f5d44; padding:0.3rem 0.7rem; border-radius:100px; font-family:'JetBrains Mono',monospace; font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.8rem; }
+  .blog-card h3 { font-family:'Fraunces',serif; font-weight:600; font-size:1.2rem; line-height:1.3; color:#0d1f1a; margin-bottom:0.6rem; }
+  .blog-card p { font-size:0.88rem; color:#2a3d35; line-height:1.5; font-weight:500; margin-bottom:1rem; }
+  .blog-meta { display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:#2a3d35; opacity:0.7; font-weight:500; }
+  .blog-read-more { color:#1f5d44; font-weight:700; text-decoration:none; transition:transform 0.3s; display:inline-block; }
+  .blog-card:hover .blog-read-more { transform:translateX(4px); }
+
+  .faq { padding:5rem 1.2rem; max-width:1100px; margin:0 auto; background:#fdfbf5; }
+  .faq-list { display:flex; flex-direction:column; gap:0.7rem; margin-top:2.5rem; }
+  .faq-item { background:#ffffff; border-radius:14px; border:1px solid var(--line); overflow:hidden; transition:all 0.3s; }
+  .faq-item:hover { box-shadow:var(--shadow-sm); }
+  .faq-item.open { border-color:#1f5d44; box-shadow:var(--shadow-sm); }
+  .faq-question { padding:1.2rem 1.5rem; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:1rem; font-weight:700; font-size:0.95rem; color:#0d1f1a; }
+  .faq-icon { width:26px; height:26px; border-radius:50%; background:#c8e6d0; color:#1f5d44; display:grid; place-items:center; font-size:1.1rem; font-weight:700; transition:all 0.3s; flex-shrink:0; }
+  .faq-item.open .faq-icon { background:#1f5d44; color:#ffffff; transform:rotate(45deg); }
+  .faq-answer { max-height:0; overflow:hidden; transition:max-height 0.4s ease; padding:0 1.5rem; }
+  .faq-item.open .faq-answer { max-height:300px; padding-bottom:1.2rem; }
+  .faq-answer p { color:#2a3d35; line-height:1.55; font-size:0.9rem; font-weight:500; }
+
+  .cta-banner { margin:3rem 1.2rem; max-width:1400px; margin-left:auto; margin-right:auto; background:linear-gradient(135deg,#1f5d44,#0d1f1a); border-radius:28px; padding:3rem 2rem; color:#faf6ed; position:relative; overflow:hidden; box-shadow:var(--shadow-lg); }
+  .cta-banner::before { content:''; position:absolute; top:-50%; right:-20%; width:60%; height:200%; background:radial-gradient(circle,rgba(212,169,60,0.25),transparent 60%); animation:rotateGlow 20s linear infinite; }
+  @keyframes rotateGlow { to { transform:rotate(360deg); } }
+  .cta-inner { position:relative; display:grid; grid-template-columns:2fr 1fr; gap:2.5rem; align-items:center; }
+  .cta-inner h2 { font-family:'Fraunces',serif; font-weight:600; font-size:clamp(1.8rem,4vw,3rem); line-height:1.05; letter-spacing:-0.02em; color:#ffffff; }
+  .cta-inner h2 em { font-style:italic; color:#d4a93c; font-weight:500; }
+  .cta-inner p { margin-top:0.9rem; opacity:0.9; font-size:1rem; line-height:1.5; max-width:500px; color:#faf6ed; font-weight:500; }
+  .cta-buttons { display:flex; flex-direction:column; gap:0.7rem; }
+  .cta-buttons .btn-primary { background:#d4a93c; color:#0d1f1a; justify-content:center; font-weight:800; }
+  .cta-buttons .btn-primary:hover { background:#faf6ed; }
+  .cta-buttons .btn-secondary { background:transparent; color:#ffffff; border-color:#ffffff; justify-content:center; }
+  .cta-buttons .btn-secondary:hover { background:#ffffff; color:#0d1f1a; }
+
+  .contact { padding:5rem 1.2rem; background:#ffffff; border-top:1px solid var(--line); }
+  .contact-inner { max-width:1400px; margin:0 auto; display:grid; grid-template-columns:1fr 1.2fr; gap:3rem; }
+  .contact h2 { font-family:'Fraunces',serif; font-weight:600; font-size:clamp(2rem,4.5vw,3.5rem); line-height:1; letter-spacing:-0.03em; color:#0d1f1a; }
+  .contact h2 em { font-style:italic; color:#1f5d44; font-weight:500; }
+  .contact-info { margin-top:1.5rem; display:flex; flex-direction:column; gap:0.5rem; }
+  .contact-row { display:flex; justify-content:space-between; align-items:center; padding:1rem 1.3rem; background:#fdfbf5; border-radius:14px; border:1px solid var(--line); transition:all 0.3s; gap:1rem; flex-wrap:wrap; }
+  .contact-row:hover { border-color:#1f5d44; background:#ffffff; box-shadow:var(--shadow-sm); transform:translateX(4px); }
+  .contact-row .mono { color:#2a3d35; font-weight:600; }
+  .form { background:#fdfbf5; padding:2rem; border-radius:22px; border:1px solid var(--line); box-shadow:var(--shadow-sm); }
+  .form-title { font-family:'Fraunces',serif; font-size:1.3rem; font-weight:700; margin-bottom:0.2rem; color:#0d1f1a; }
+  .form-subtitle { font-size:0.85rem; color:#2a3d35; margin-bottom:1.3rem; font-weight:500; }
+  .form label { display:block; font-family:'JetBrains Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem; color:#0d1f1a; font-weight:700; }
+  .form input, .form select, .form textarea { width:100%; background:#ffffff; border:1px solid var(--line); padding:0.85rem 1rem; color:#0d1f1a; font-family:'Manrope',sans-serif; font-size:0.92rem; margin-bottom:1rem; border-radius:10px; transition:all 0.3s; font-weight:500; }
+  .form input:focus, .form select:focus, .form textarea:focus { outline:none; border-color:#1f5d44; box-shadow:0 0 0 3px rgba(31,93,68,0.1); }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+  .form button { background:#0d1f1a; color:#ffffff; border:none; padding:1rem 2rem; border-radius:100px; font-weight:700; cursor:pointer; font-family:inherit; font-size:0.92rem; transition:all 0.3s; margin-top:0.4rem; width:100%; position:relative; overflow:hidden; }
+  .form button::before { content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(212,169,60,0.4),transparent); transform:translateX(-100%); transition:transform 0.6s; }
+  .form button:hover::before { transform:translateX(100%); }
+  .form button:hover { background:#1f5d44; transform:translateY(-2px); }
+
+  footer { background:#0d1f1a; color:#faf6ed; padding:3.5rem 1.2rem 1.5rem; }
+  .footer-grid { max-width:1600px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,0.1); }
+  .footer-brand h3 { font-family:'Fraunces',serif; font-size:1.4rem; margin-bottom:0.8rem; font-weight:700; }
+  .footer-brand p { opacity:0.75; line-height:1.55; font-size:0.88rem; max-width:320px; font-weight:500; }
+  .footer-col h4 { font-family:'JetBrains Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.08em; color:#d4a93c; margin-bottom:1rem; font-weight:700; }
+  .footer-col ul { list-style:none; }
+  .footer-col li { margin-bottom:0.5rem; }
+  .footer-col a, .footer-col li { color:#faf6ed; text-decoration:none; font-size:0.88rem; opacity:0.75; font-weight:500; transition:all 0.3s; display:inline-block; }
+  .footer-col a:hover { opacity:1; color:#d4a93c; transform:translateX(3px); }
+  .footer-bottom { max-width:1600px; margin:0 auto; padding-top:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
+  .socials { display:flex; gap:0.5rem; }
+  .socials a { width:36px; height:36px; border-radius:50%; border:1px solid rgba(255,255,255,0.25); display:grid; place-items:center; color:#faf6ed; text-decoration:none; transition:all 0.3s; font-size:0.78rem; font-family:'JetBrains Mono',monospace; font-weight:700; }
+  .socials a:hover { background:#d4a93c; color:#0d1f1a; border-color:#d4a93c; transform:translateY(-3px); }
+  .copyright { font-family:'JetBrains Mono',monospace; font-size:0.7rem; opacity:0.5; font-weight:500; }
+
+  .float-actions { position:fixed; bottom:1.2rem; right:1.2rem; z-index:99; display:flex; flex-direction:column; gap:0.6rem; }
+  .float-btn { width:54px; height:54px; border-radius:50%; display:grid; place-items:center; box-shadow:var(--shadow-lg); cursor:pointer; transition:transform 0.3s; text-decoration:none; color:#ffffff; border:none; }
+  .float-btn:hover { transform:scale(1.15) rotate(10deg); }
+  .scroll-top { background:#0d1f1a; color:#ffffff; opacity:0; pointer-events:none; transition:opacity 0.3s,transform 0.3s; }
+  .scroll-top.visible { opacity:1; pointer-events:auto; }
+
+  .sound-toggle { position:fixed; bottom:1.2rem; left:1.2rem; z-index:99; width:44px; height:44px; border-radius:50%; background:#ffffff; border:1px solid var(--line); display:grid; place-items:center; cursor:pointer; box-shadow:var(--shadow-sm); font-size:1rem; transition:all 0.3s; }
+  .sound-toggle:hover { transform:scale(1.1); }
+
+  .reveal { opacity:0; transform:translateY(30px); transition:all 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  @media (max-width:900px) {
+    .announcement { top:0; font-size:0.7rem; padding:0.5rem 0.8rem; }
+    nav { top:30px; padding:0.8rem 1rem; }
+    .logo { font-size:1.1rem; }
+    .logo-mark { width:28px; height:28px; font-size:0.95rem; }
+    .nav-links { gap:0.5rem; }
+    .nav-links a:not(.cta-nav):not(.lang-switch button) { display:none; }
+    .lang-switch { font-size:0.65rem; }
+    .lang-switch button { padding:0.25rem 0.5rem; }
+    .cta-nav { padding:0.5rem 0.9rem; font-size:0.75rem; }
+    .hero { padding:6rem 1rem 2.5rem; }
+    .hero-grid { grid-template-columns:1fr; gap:2rem; }
+    .badge { font-size:0.72rem; padding:0.4rem 0.75rem; }
+    .hero-title { font-size:clamp(2.2rem,11vw,3.5rem); }
+    .hero-desc { font-size:0.95rem; margin-top:1.2rem; }
+    .hero-actions { gap:0.6rem; margin-top:1.5rem; flex-direction:column; align-items:stretch; }
+    .btn-primary, .btn-secondary { justify-content:center; padding:0.95rem 1.4rem; }
+    .booking-card { padding:1.3rem; }
+    .ba-image-before .ba-label, .ba-image-after .ba-label { font-size:1.1rem; }
+    .ba-info { flex-direction:column; align-items:flex-start; gap:0.8rem; }
+    .ba-gallery-thumbs { grid-template-columns:repeat(3,1fr); }
+    .blog-grid { grid-template-columns:1fr; }
+    .trust-strip { padding:2rem 1rem; }
+    .trust-inner { grid-template-columns:1fr 1fr; gap:1rem; }
+    .counters-grid { grid-template-columns:1fr 1fr; gap:1.5rem; }
+    .counter-icon { font-size:2rem; }
+    .trust-icon { width:40px; height:40px; font-size:1.2rem; }
+    .trust-item h4 { font-size:0.85rem; }
+    .trust-item p { font-size:0.72rem; }
+    .section-header { grid-template-columns:1fr; gap:1rem; margin-bottom:2rem; }
+    .service-grid { grid-template-columns:1fr; gap:1rem; }
+    .service-card { min-height:auto; padding:1.5rem; }
+    .steps { grid-template-columns:1fr 1fr; gap:0.8rem; margin-top:2rem; }
+    .step { padding:1.3rem; }
+    .step-num { font-size:2.5rem; }
+    .faq-question { padding:1rem 1.2rem; font-size:0.9rem; }
+    .faq-item.open .faq-answer { padding:0 1.2rem 1rem; }
+    .cta-banner { margin:2rem 1rem; padding:2rem 1.3rem; border-radius:22px; }
+    .cta-inner { grid-template-columns:1fr; gap:1.5rem; }
+    .cta-inner h2 { font-size:1.6rem; }
+    .contact-inner { grid-template-columns:1fr; gap:2rem; }
+    .form { padding:1.5rem; }
+    .form-row { grid-template-columns:1fr; gap:0; }
+    .footer-grid { grid-template-columns:1fr 1fr; gap:1.8rem; }
+    .footer-brand { grid-column:span 2; }
+    .services, .gallery, .reviews, .blog, .faq, .counters-section { padding:3.5rem 1rem; }
+    .process, .contact { padding:3.5rem 1rem; }
+    .float-btn { width:50px; height:50px; }
+    .intro-broom { font-size:4rem; }
+    .sound-toggle { width:40px; height:40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== INTRO LOADER (broom sweeps screen) ===== -->
+<div class="intro-loader" id="introLoader">
+  <div class="intro-cover"></div>
+  <div class="intro-broom">🧹</div>
+</div>
+
+<!-- ===== CUSTOM BROOM CURSOR ===== -->
+<div class="broom-cursor" id="broomCursor">🧹</div>
+
+<div class="announcement">
+  <span data-en="Family-owned · 25+ years of experience · Licensed & Insured" data-es="Empresa familiar · 25+ años de experiencia · Licencia y Seguro">Family-owned · 25+ years of experience · Licensed & Insured</span>
+</div>
+
+<nav id="mainNav">
+  <a href="#" class="logo">
+    <div class="logo-mark">★</div>
+    Cleaning<span>.</span>
+  </a>
+  <div class="nav-links">
+    <a href="#services" data-en="Services" data-es="Servicios">Services</a>
+    <a href="#gallery" data-en="Work" data-es="Trabajos">Work</a>
+    <a href="#blog" data-en="Tips" data-es="Tips">Tips</a>
+    <a href="#faq">FAQ</a>
+    <div class="lang-switch">
+      <button class="active" data-lang="en">EN</button>
+      <button data-lang="es">ES</button>
+    </div>
+    <a href="#booking" class="cta-nav" data-en="Get Quote" data-es="Cotizar">Get Quote</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid">
+    <div>
+      <div class="hero-badges">
+        <div class="badge"><span class="badge-dot"></span><span data-en="Available now" data-es="Disponibles">Available now</span></div>
+        <div class="badge" style="background:#1f5d44; color:#ffffff; border-color:#1f5d44;"><span data-en="25+ years experience" data-es="25+ años de experiencia">25+ years experience</span></div>
+        <div class="badge"><span data-en="Licensed & Insured" data-es="Licencia y Seguro">Licensed & Insured</span></div>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="word-line"><span class="word-inner" data-en="Premium cleaning" data-es="Limpieza premium">Premium cleaning</span></span>
+        <span class="word-line"><span class="word-inner" data-en="for spaces" data-es="para espacios">for spaces</span></span>
+        <span class="word-line"><span class="word-inner"><span data-en="that" data-es="que">that</span> <em data-en="deserve" data-es="merecen">deserve</em></span></span>
+        <span class="word-line"><span class="word-inner"><span class="highlight"><em data-en="excellence." data-es="excelencia.">excellence.</em></span></span></span>
+      </h1>
+
+      <p class="hero-desc" data-en="Professional commercial and residential cleaning services. Family-owned, fully insured, committed to quality in every space we clean." data-es="Servicios profesionales de limpieza comercial y residencial. Empresa familiar, asegurados, comprometidos con la calidad.">
+        Professional commercial and residential cleaning services. Family-owned, fully insured, committed to quality in every space we clean.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#booking" class="btn-primary">
+          <span data-en="Request Free Quote" data-es="Cotización Gratis">Request Free Quote</span>
+          <span>→</span>
+        </a>
+        <a href="#contact" class="btn-secondary">
+          <span data-en="📞 Contact Us" data-es="📞 Contáctanos">📞 Contact Us</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="booking-card" id="booking">
+      <div class="booking-header">
+        <h3 data-en="Get a Free Quote" data-es="Cotización Gratis">Get a Free Quote</h3>
+        <div class="subtitle" data-en="✨ We come to you · No obligation" data-es="✨ Vamos a ti · Sin compromiso">✨ We come to you · No obligation</div>
+      </div>
+
+      <div class="booking-step active">
+        <label class="booking-label" data-en="What service do you need?" data-es="¿Qué servicio necesitas?">What service do you need?</label>
+        <select class="booking-select" id="serviceType">
+          <option value="" data-en="Select a service..." data-es="Selecciona...">Select a service...</option>
+          <option data-en="🏢 Commercial Cleaning" data-es="🏢 Limpieza Comercial">🏢 Commercial Cleaning</option>
+          <option data-en="🏠 Residential Cleaning" data-es="🏠 Limpieza Residencial">🏠 Residential Cleaning</option>
+          <option data-en="🧼 Carpet & Upholstery" data-es="🧼 Alfombras">🧼 Carpet & Upholstery</option>
+        </select>
+
+        <div class="input-wrap" style="margin-top:0.7rem;">
+          <input type="text" class="booking-input broom-input" id="bookName" placeholder="Full Name *" data-en-placeholder="Full Name *" data-es-placeholder="Nombre Completo *" required>
+          <div class="broom-sweep">
+            <span class="broom">🧹</span>
+            <span class="dust" style="left:20%;"></span>
+            <span class="dust" style="left:35%;"></span>
+            <span class="dust" style="left:50%;"></span>
+            <span class="dust" style="left:65%;"></span>
+            <span class="dust" style="left:80%;"></span>
+          </div>
+        </div>
+
+        <div class="input-wrap">
+          <input type="tel" class="booking-input broom-input" id="bookPhone" placeholder="Phone Number *" data-en-placeholder="Phone Number *" data-es-placeholder="Teléfono *" required>
+          <div class="broom-sweep">
+            <span class="broom">🧹</span>
+            <span class="dust" style="left:20%;"></span>
+            <span class="dust" style="left:35%;"></span>
+            <span class="dust" style="left:50%;"></span>
+            <span class="dust" style="left:65%;"></span>
+            <span class="dust" style="left:80%;"></span>
+          </div>
+        </div>
+
+        <div class="input-wrap">
+          <input type="email" class="booking-input broom-input" id="bookEmail" placeholder="Email" data-en-placeholder="Email" data-es-placeholder="Correo">
+          <div class="broom-sweep">
+            <span class="broom">🧹</span>
+            <span class="dust" style="left:20%;"></span>
+            <span class="dust" style="left:35%;"></span>
+            <span class="dust" style="left:50%;"></span>
+            <span class="dust" style="left:65%;"></span>
+            <span class="dust" style="left:80%;"></span>
+          </div>
+        </div>
+
+        <div class="booking-buttons" style="flex-direction:column; gap:0.5rem;">
+          <button class="booking-btn booking-btn-next" id="confirmBooking" style="width:100%;" data-en="Request Free Quote ✓" data-es="Solicitar Cotización ✓">Request Free Quote ✓</button>
+        </div>
+
+        <div style="display:flex; gap:0.5rem; margin-top:0.7rem;">
+          <a href="https://wa.me/10000000000" target="_blank" class="booking-btn" style="flex:1; background:#25D366; color:#ffffff; text-align:center; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem;">
+            <span>💬</span> WhatsApp
+          </a>
+          <a href="tel:+10000000000" class="booking-btn" style="flex:1; background:#fdfbf5; color:#0d1f1a; border:1px solid var(--line); text-align:center; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; gap:0.4rem;">
+            <span>📞</span> <span data-en="Call" data-es="Llamar">Call</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="booking-step" id="step-success">
+        <div class="booking-success">
+          <div class="success-icon">✓</div>
+          <h4 data-en="Quote Requested!" data-es="¡Cotización Solicitada!">Quote Requested!</h4>
+          <p data-en="We'll contact you shortly to confirm your free walkthrough." data-es="Te contactaremos pronto para confirmar.">
+            We'll contact you shortly to confirm your free walkthrough.
+          </p>
+          <button class="booking-btn booking-btn-next" style="margin-top:1.2rem;" onclick="resetBooking()" data-en="Send Another" data-es="Enviar Otra">Send Another</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="trust-strip">
+  <div class="trust-inner">
+    <div class="trust-item">
+      <div class="trust-icon">🛡️</div>
+      <div>
+        <h4 data-en="Licensed & Insured" data-es="Licencia y Seguro">Licensed & Insured</h4>
+        <p data-en="Fully covered work" data-es="Trabajo asegurado">Fully covered work</p>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">👥</div>
+      <div>
+        <h4 data-en="Trained Team" data-es="Personal Capacitado">Trained Team</h4>
+        <p data-en="Experienced staff" data-es="Personal con experiencia">Experienced staff</p>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">⭐</div>
+      <div>
+        <h4 data-en="Family-Owned" data-es="Empresa Familiar">Family-Owned</h4>
+        <p data-en="Personal attention" data-es="Atención personal">Personal attention</p>
+      </div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">⚡</div>
+      <div>
+        <h4 data-en="Free Quotes" data-es="Cotización Gratis">Free Quotes</h4>
+        <p data-en="No obligation" data-es="Sin compromiso">No obligation</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ANIMATED COUNTERS ===== -->
+<section class="counters-section" id="counters">
+  <div class="counters-inner">
+    <div class="counters-header reveal">
+      <span class="mono" data-en="By the numbers" data-es="En números">By the numbers</span>
+      <h2>
+        <span data-en="Trusted by clients," data-es="Confiables,">Trusted by clients,</span>
+        <em data-en="proven by results." data-es="probados con resultados.">proven by results.</em>
+      </h2>
+    </div>
+    <div class="counters-grid">
+      <div class="counter-card reveal">
+        <div class="counter-icon">🏠</div>
+        <div class="counter-number"><span class="counter" data-target="500">0</span><span class="counter-suffix">+</span></div>
+        <div class="counter-label" data-en="Spaces cleaned" data-es="Espacios limpiados">Spaces cleaned</div>
+      </div>
+      <div class="counter-card reveal">
+        <div class="counter-icon">⭐</div>
+        <div class="counter-number"><span class="counter" data-target="4.9">0</span><span class="counter-suffix">/5</span></div>
+        <div class="counter-label" data-en="Average rating" data-es="Calificación promedio">Average rating</div>
+      </div>
+      <div class="counter-card reveal">
+        <div class="counter-icon">📅</div>
+        <div class="counter-number"><span class="counter" data-target="25">0</span><span class="counter-suffix" data-en="+ yrs" data-es="+ años">+ yrs</span></div>
+        <div class="counter-label" data-en="In business" data-es="En el mercado">In business</div>
+      </div>
+      <div class="counter-card reveal">
+        <div class="counter-icon">💚</div>
+        <div class="counter-number"><span class="counter" data-target="98">0</span><span class="counter-suffix">%</span></div>
+        <div class="counter-label" data-en="Client retention" data-es="Retención de clientes">Client retention</div>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:2rem; font-size:0.78rem; opacity:0.6; font-family:'JetBrains Mono',monospace;" data-en="* Other numbers pending — to be updated with real metrics" data-es="* Otros números pendientes — actualizar con métricas reales">* Other numbers pending — to be updated with real metrics</p>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="section-header reveal">
+    <div>
+      <span class="mono" data-en="[01] What we do" data-es="[01] Qué hacemos">[01] What we do</span>
+    </div>
+    <h2 class="section-title">
+      <span data-en="Services," data-es="Servicios,">Services,</span>
+      <em data-en="done right." data-es="bien hechos.">done right.</em>
+    </h2>
+  </div>
+
+  <div class="service-grid">
+    <div class="service-card reveal">
+      <div>
+        <div class="service-icon-box">🏢</div>
+        <span class="service-num">001</span>
+        <h3><em data-en="Commercial" data-es="Comercial">Commercial</em></h3>
+        <p data-en="Offices, retail, medical facilities. Recurring cleaning programs." data-es="Oficinas, locales, médico. Programas recurrentes.">Offices, retail, medical facilities. Recurring cleaning programs.</p>
+      </div>
+      <div class="service-bottom">
+        <span data-en="Personalized consultation" data-es="Consulta personalizada" style="font-size:0.82rem; color:#1f5d44; font-weight:600;">Personalized consultation</span>
+        <div class="service-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="service-card featured reveal">
+      <div>
+        <div class="service-icon-box">🏠</div>
+        <span class="service-num">002</span>
+        <h3><em data-en="Residential" data-es="Residencial">Residential</em></h3>
+        <p data-en="Deep cleaning for homes. Move-in/move-out, recurring, one-time." data-es="Limpieza profunda para casas.">Deep cleaning for homes. Move-in/move-out, recurring, one-time.</p>
+      </div>
+      <div class="service-bottom">
+        <span data-en="Personalized consultation" data-es="Consulta personalizada" style="font-size:0.82rem; color:#d4a93c; font-weight:600;">Personalized consultation</span>
+        <div class="service-arrow">→</div>
+      </div>
+    </div>
+
+    <div class="service-card reveal">
+      <div>
+        <div class="service-icon-box">🧼</div>
+        <span class="service-num">003</span>
+        <h3><em data-en="Carpet" data-es="Alfombras">Carpet</em></h3>
+        <p data-en="Carpet and upholstery cleaning with deep extraction." data-es="Limpieza con extracción profunda.">Carpet and upholstery cleaning with deep extraction.</p>
+      </div>
+      <div class="service-bottom">
+        <span data-en="Personalized consultation" data-es="Consulta personalizada" style="font-size:0.82rem; color:#1f5d44; font-weight:600;">Personalized consultation</span>
+        <div class="service-arrow">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="process">
+  <div class="process-inner">
+    <div class="section-header reveal">
+      <div>
+        <span class="mono" data-en="[02] How it works" data-es="[02] Cómo funciona">[02] How it works</span>
+      </div>
+      <h2 class="section-title">
+        <span data-en="Simple" data-es="Sencillo">Simple</span>
+        <em data-en="and transparent." data-es="y transparente.">and transparent.</em>
+      </h2>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h4 data-en="Reach out" data-es="Contáctanos">Reach out</h4>
+        <p data-en="Send us a message, call, or WhatsApp. We respond fast." data-es="Envíanos un mensaje, llámanos o por WhatsApp. Respondemos rápido.">Send us a message, call, or WhatsApp. We respond fast.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <h4 data-en="Free walkthrough" data-es="Visita gratis">Free walkthrough</h4>
+        <p data-en="We assess your space and provide a transparent quote." data-es="Evaluamos y cotizamos.">We assess your space and provide a transparent quote.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <h4 data-en="Team arrives" data-es="Llega el equipo">Team arrives</h4>
+        <p data-en="Trained, equipped, ready to work — at the time you choose." data-es="Capacitados, listos cuando tú decidas.">Trained, equipped, ready to work — at the time you choose.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">04</div>
+        <h4 data-en="You inspect" data-es="Tú inspeccionas">You inspect</h4>
+        <p data-en="We walk through together. If something's off, we fix it." data-es="Revisamos juntos. Si algo no está bien, lo arreglamos.">We walk through together. If something's off, we fix it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== B/A GALLERY WITH VIDEO SUPPORT ===== -->
+<section class="gallery" id="gallery">
+  <div class="section-header reveal">
+    <div>
+      <span class="mono" data-en="[03] Before & After" data-es="[03] Antes y Después">[03] Before & After</span>
+    </div>
+    <h2 class="section-title">
+      <span data-en="See the" data-es="Ve la">See the</span>
+      <em data-en="transformation." data-es="transformación.">transformation.</em>
+    </h2>
+  </div>
+
+  <div class="ba-showcase reveal">
+    <div class="ba-container" id="baContainer">
+      <div class="ba-image-before" id="baBefore">
+        <span class="ba-tag-before" data-en="BEFORE" data-es="ANTES">BEFORE</span>
+        <span class="ba-label" id="baBeforeLabel" data-en="Before photo/video here" data-es="Foto/video antes">Before photo/video here</span>
+      </div>
+      <div class="ba-image-after" id="baAfter">
+        <span class="ba-tag-after" data-en="AFTER" data-es="DESPUÉS">AFTER</span>
+        <span class="ba-label" id="baAfterLabel" data-en="After photo/video here" data-es="Foto/video después">After photo/video here</span>
+      </div>
+      <div class="ba-divider" id="baDivider">
+        <div class="ba-handle"></div>
+      </div>
+    </div>
+
+    <div class="ba-info">
+      <div class="ba-info-text">
+        <h4 id="baTitle" data-en="Drag to compare" data-es="Arrastra para comparar">Drag to compare</h4>
+        <p id="baDescription" data-en="Real photos or videos go here" data-es="Aquí van fotos o videos reales">Real photos or videos go here</p>
+      </div>
+      <div class="ba-controls">
+        <button class="ba-control-btn" onclick="prevBA()" aria-label="Previous">‹</button>
+        <button class="ba-control-btn" onclick="nextBA()" aria-label="Next">›</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category tabs (folders) -->
+  <div class="ba-categories reveal">
+    <button class="ba-cat-tab active" data-cat="commercial" onclick="switchCategory('commercial')" data-en="🏢 Commercial" data-es="🏢 Comercial">🏢 Commercial</button>
+    <button class="ba-cat-tab" data-cat="residential" onclick="switchCategory('residential')" data-en="🏠 Residential" data-es="🏠 Residencial">🏠 Residential</button>
+    <button class="ba-cat-tab" data-cat="carpet" onclick="switchCategory('carpet')" data-en="🧼 Carpet" data-es="🧼 Alfombras">🧼 Carpet</button>
+  </div>
+
+  <!-- Thumbs by category - each category shows its own folder of projects -->
+  <div class="ba-gallery-thumbs" id="thumbs-commercial">
+    <div class="ba-thumb ba-thumb-1 active" onclick="selectBA(0)">
+      <span class="ba-thumb-label" data-en="Office Lobby" data-es="Lobby Oficina">Office Lobby</span>
+    </div>
+    <div class="ba-thumb ba-thumb-3" onclick="selectBA(1)">
+      <span class="ba-thumb-label" data-en="Retail Store" data-es="Tienda">Retail Store</span>
+    </div>
+    <div class="ba-thumb ba-thumb-5" onclick="selectBA(2)">
+      <span class="ba-thumb-label" data-en="Medical Office" data-es="Oficina Médica">Medical Office</span>
+    </div>
+  </div>
+
+  <div class="ba-gallery-thumbs" id="thumbs-residential" style="display:none;">
+    <div class="ba-thumb ba-thumb-1 active" onclick="selectBA(0)">
+      <span class="ba-thumb-label" data-en="Kitchen Deep" data-es="Cocina">Kitchen Deep</span>
+    </div>
+    <div class="ba-thumb ba-thumb-4" onclick="selectBA(1)">
+      <span class="ba-thumb-label" data-en="Move-out" data-es="Mudanza">Move-out</span>
+    </div>
+    <div class="ba-thumb ba-thumb-5" onclick="selectBA(2)">
+      <span class="ba-thumb-label" data-en="Bathroom" data-es="Baño">Bathroom</span>
+    </div>
+  </div>
+
+  <div class="ba-gallery-thumbs" id="thumbs-carpet" style="display:none;">
+    <div class="ba-thumb ba-thumb-2 active" onclick="selectBA(0)">
+      <span class="ba-thumb-video-icon">▶</span>
+      <span class="ba-thumb-label" data-en="Carpet · Video" data-es="Alfombra · Video">Carpet · Video</span>
+    </div>
+    <div class="ba-thumb ba-thumb-6" onclick="selectBA(1)">
+      <span class="ba-thumb-label" data-en="Sofa" data-es="Sofá">Sofa</span>
+    </div>
+    <div class="ba-thumb ba-thumb-3" onclick="selectBA(2)">
+      <span class="ba-thumb-label" data-en="Stain Removal" data-es="Manchas">Stain Removal</span>
+    </div>
+  </div>
+
+  <div class="placeholder-block reveal" style="margin-top:2rem;">
+    <strong data-en="📸🎥 Supports both photos AND videos" data-es="📸🎥 Soporta fotos Y videos">📸🎥 Supports both photos AND videos</strong>
+    <p data-en="The slider works with: regular photos (JPG, PNG), or videos (MP4) that auto-play silently in loop. Videos are perfect for time-lapses showing the cleaning transformation. Just paste the URL when you have them." data-es="El deslizador funciona con: fotos regulares (JPG, PNG), o videos (MP4) que reproducen en silencio en loop. Los videos son perfectos para time-lapses que muestran la transformación. Solo pega la URL cuando los tengas.">
+      The slider works with: regular photos (JPG, PNG), or videos (MP4) that auto-play silently in loop. Videos are perfect for time-lapses showing the cleaning transformation. Just paste the URL when you have them.
+    </p>
+  </div>
+</section>
+
+<section class="reviews">
+  <div class="section-header reveal">
+    <div>
+      <span class="mono" data-en="[04] Reviews" data-es="[04] Reseñas">[04] Reviews</span>
+    </div>
+    <h2 class="section-title">
+      <span data-en="What clients" data-es="Lo que dicen">What clients</span>
+      <em data-en="say about us." data-es="los clientes.">say about us.</em>
+    </h2>
+  </div>
+
+  <div class="placeholder-block reveal">
+    <div class="google-badge" style="margin-bottom:1rem;">
+      <svg class="google-logo" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      <span class="google-rating-text" data-en="Google Reviews" data-es="Reseñas de Google">Google Reviews</span>
+    </div>
+    <strong data-en="💬 Live Google Reviews — Coming Soon" data-es="💬 Reseñas en Vivo — Próximamente">💬 Live Google Reviews — Coming Soon</strong>
+    <p data-en="Real reviews from Google Business Profile will appear here automatically." data-es="Las reseñas reales de Google aparecerán aquí automáticamente.">
+      Real reviews from Google Business Profile will appear here automatically.
+    </p>
+  </div>
+</section>
+
+<section class="blog" id="blog">
+  <div class="section-header reveal">
+    <div>
+      <span class="mono" data-en="[05] Cleaning Tips" data-es="[05] Tips">[05] Cleaning Tips</span>
+    </div>
+    <h2 class="section-title">
+      <span data-en="Tips & guides" data-es="Tips y guías">Tips & guides</span>
+      <em data-en="from the pros." data-es="de los expertos.">from the pros.</em>
+    </h2>
+  </div>
+
+  <div class="blog-grid">
+    <article class="blog-card blog-1 reveal">
+      <div class="blog-card-image">🏢</div>
+      <div class="blog-card-content">
+        <span class="blog-tag" data-en="Commercial" data-es="Comercial">Commercial</span>
+        <h3 data-en="How to choose the right cleaning company" data-es="Cómo elegir la empresa de limpieza ideal">How to choose the right cleaning company</h3>
+        <p data-en="A clean office impacts productivity, health, and client impressions." data-es="Una oficina limpia impacta productividad, salud e impresión.">A clean office impacts productivity, health, and client impressions.</p>
+        <div class="blog-meta">
+          <span data-en="5 min read" data-es="5 min lectura">5 min read</span>
+          <a href="#" class="blog-read-more" data-en="Read more →" data-es="Leer más →">Read more →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="blog-card blog-2 reveal">
+      <div class="blog-card-image">🏠</div>
+      <div class="blog-card-content">
+        <span class="blog-tag" data-en="Residential" data-es="Residencial">Residential</span>
+        <h3 data-en="Deep cleaning vs regular cleaning" data-es="Limpieza profunda vs regular">Deep cleaning vs regular cleaning</h3>
+        <p data-en="Wondering which service your home needs? We break it down." data-es="¿Qué servicio necesita tu casa? Te explicamos.">Wondering which service your home needs? We break it down.</p>
+        <div class="blog-meta">
+          <span data-en="4 min read" data-es="4 min">4 min read</span>
+          <a href="#" class="blog-read-more" data-en="Read more →" data-es="Leer más →">Read more →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="blog-card blog-3 reveal">
+      <div class="blog-card-image">✨</div>
+      <div class="blog-card-content">
+        <span class="blog-tag" data-en="Tips" data-es="Tips">Tips</span>
+        <h3 data-en="5 cleaning mistakes that damage your carpet" data-es="5 errores que dañan tu alfombra">5 cleaning mistakes that damage your carpet</h3>
+        <p data-en="Common cleaning habits actually shorten your carpet's life." data-es="Hábitos comunes que acortan la vida de la alfombra.">Common cleaning habits actually shorten your carpet's life.</p>
+        <div class="blog-meta">
+          <span data-en="3 min read" data-es="3 min">3 min read</span>
+          <a href="#" class="blog-read-more" data-en="Read more →" data-es="Leer más →">Read more →</a>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="section-header reveal" style="grid-template-columns:1fr; text-align:center;">
+    <div>
+      <span class="mono" data-en="[06] FAQ" data-es="[06] Preguntas">[06] FAQ</span>
+      <h2 class="section-title" style="margin-top:0.8rem;">
+        <span data-en="Common" data-es="Preguntas">Common</span>
+        <em data-en="questions." data-es="frecuentes.">questions.</em>
+      </h2>
+    </div>
+  </div>
+
+  <div class="faq-list">
+    <div class="faq-item">
+      <div class="faq-question">
+        <span data-en="What areas do you serve?" data-es="¿Qué áreas atienden?">What areas do you serve?</span>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p><span class="placeholder" data-en="To be added" data-es="Por agregar">To be added</span></p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        <span data-en="Do you bring your own supplies?" data-es="¿Traen productos?">Do you bring your own supplies?</span>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p><span class="placeholder" data-en="To be added" data-es="Por agregar">To be added</span></p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        <span data-en="Are you insured?" data-es="¿Asegurados?">Are you insured?</span>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p><span class="placeholder" data-en="To be added" data-es="Por agregar">To be added</span></p>
+      </div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        <span data-en="What's your guarantee?" data-es="¿Garantía?">What's your guarantee?</span>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p><span class="placeholder" data-en="To be added" data-es="Por agregar">To be added</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-banner reveal">
+  <div class="cta-inner">
+    <div>
+      <h2>
+        <span data-en="Ready for a space that" data-es="¿Listo para un espacio que">Ready for a space that</span>
+        <em data-en="actually shines?" data-es="realmente brille?">actually shines?</em>
+      </h2>
+      <p data-en="Free quote, no obligation. We come to you." data-es="Cotización gratuita, sin compromiso. Vamos a ti.">
+        Free quote, no obligation. We come to you.
+      </p>
+    </div>
+    <div class="cta-buttons">
+      <a href="#booking" class="btn-primary">
+        <span data-en="Request Free Quote →" data-es="Solicitar Cotización →">Request Free Quote →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="reveal">
+      <span class="mono" data-en="[07] Get in touch" data-es="[07] Contáctanos">[07] Get in touch</span>
+      <h2 style="margin-top:0.8rem;">
+        <span data-en="Let's talk about" data-es="Hablemos de">Let's talk about</span>
+        <em data-en="your space." data-es="tu espacio.">your space.</em>
+      </h2>
+      <p style="margin-top:0.8rem; color:#2a3d35; line-height:1.55; font-weight:500;" data-en="Free quotes. No obligations." data-es="Cotizaciones gratis.">
+        Free quotes. No obligations.
+      </p>
+
+      <div class="contact-info">
+        <div class="contact-row">
+          <span class="mono" data-en="Phone" data-es="Teléfono">Phone</span>
+          <span class="placeholder" data-en="To be added" data-es="Por agregar">To be added</span>
+        </div>
+        <div class="contact-row">
+          <span class="mono">WhatsApp</span>
+          <span class="placeholder" data-en="To be added" data-es="Por agregar">To be added</span>
+        </div>
+        <div class="contact-row">
+          <span class="mono">Email</span>
+          <span class="placeholder" data-en="To be added" data-es="Por agregar">To be added</span>
+        </div>
+        <div class="contact-row">
+          <span class="mono" data-en="Hours" data-es="Horario">Hours</span>
+          <span class="placeholder" data-en="To be added" data-es="Por agregar">To be added</span>
+        </div>
+      </div>
+    </div>
+
+    <form class="form reveal" onsubmit="event.preventDefault(); alert('Demo: Message would be sent here.'); this.reset();">
+      <div class="form-title" data-en="Quick Message" data-es="Mensaje Rápido">Quick Message</div>
+      <div class="form-subtitle" data-en="Have a question? Send us a message." data-es="¿Tienes una pregunta?">Have a question? Send us a message.</div>
+
+      <label data-en="Full Name *" data-es="Nombre *">Full Name *</label>
+      <div class="input-wrap">
+        <input type="text" class="broom-input" required placeholder="Your name">
+        <div class="broom-sweep">
+          <span class="broom">🧹</span>
+          <span class="dust" style="left:20%;"></span>
+          <span class="dust" style="left:40%;"></span>
+          <span class="dust" style="left:60%;"></span>
+          <span class="dust" style="left:80%;"></span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div>
+          <label>Email *</label>
+          <div class="input-wrap">
+            <input type="email" class="broom-input" required placeholder="email@example.com">
+            <div class="broom-sweep">
+              <span class="broom">🧹</span>
+              <span class="dust" style="left:20%;"></span>
+              <span class="dust" style="left:40%;"></span>
+              <span class="dust" style="left:60%;"></span>
+              <span class="dust" style="left:80%;"></span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <label data-en="Phone" data-es="Teléfono">Phone</label>
+          <div class="input-wrap">
+            <input type="tel" class="broom-input" placeholder="(555) 123-4567">
+            <div class="broom-sweep">
+              <span class="broom">🧹</span>
+              <span class="dust" style="left:20%;"></span>
+              <span class="dust" style="left:40%;"></span>
+              <span class="dust" style="left:60%;"></span>
+              <span class="dust" style="left:80%;"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <label data-en="Message" data-es="Mensaje">Message</label>
+      <div class="input-wrap">
+        <textarea class="broom-input" rows="3" placeholder="Tell us how we can help..."></textarea>
+        <div class="broom-sweep">
+          <span class="broom">🧹</span>
+          <span class="dust" style="left:20%;"></span>
+          <span class="dust" style="left:40%;"></span>
+          <span class="dust" style="left:60%;"></span>
+          <span class="dust" style="left:80%;"></span>
+        </div>
+      </div>
+      <button type="submit" data-en="Send Message →" data-es="Enviar →">Send Message →</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>Cleaning<em style="color:#d4a93c; font-style:italic;">.</em> Services</h3>
+      <p data-en="Family-owned commercial and residential cleaning services. Premium quality, dependable team." data-es="Servicios familiares de limpieza. Calidad premium.">
+        Family-owned commercial and residential cleaning services. Premium quality, dependable team.
+      </p>
+    </div>
+    <div class="footer-col">
+      <h4 data-en="Services" data-es="Servicios">Services</h4>
+      <ul>
+        <li><a href="#" data-en="Commercial" data-es="Comercial">Commercial</a></li>
+        <li><a href="#" data-en="Residential" data-es="Residencial">Residential</a></li>
+        <li><a href="#" data-en="Carpet Care" data-es="Alfombras">Carpet Care</a></li>
+        <li><a href="#" data-en="Floor Care" data-es="Pisos">Floor Care</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-en="Company" data-es="Empresa">Company</h4>
+      <ul>
+        <li><a href="#" data-en="About Us" data-es="Nosotros">About Us</a></li>
+        <li><a href="#blog" data-en="Cleaning Tips" data-es="Tips">Cleaning Tips</a></li>
+        <li><a href="#contact" data-en="Contact" data-es="Contacto">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4 data-en="Contact" data-es="Contacto">Contact</h4>
+      <ul>
+        <li><span class="placeholder" data-en="Phone" data-es="Teléfono">Phone</span></li>
+        <li><span class="placeholder" data-en="Email" data-es="Email">Email</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="copyright">© 2025 Demo Site · For preview purposes</div>
+    <div class="socials">
+      <a href="#" aria-label="Instagram">IG</a>
+      <a href="#" aria-label="Facebook">FB</a>
+      <a href="#" aria-label="Google">G</a>
+    </div>
+  </div>
+</footer>
+
+<div class="float-actions">
+  <button class="float-btn scroll-top" id="scrollTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <span style="font-size:1.3rem; font-weight:700;">↑</span>
+  </button>
+</div>
+
+<script>
+  // ===== INTRO LOADER =====
+  setTimeout(() => {
+    document.getElementById('introLoader').classList.add('done');
+    setTimeout(() => document.getElementById('introLoader').remove(), 500);
+  }, 100);
+
+  // ===== SOUND ENGINE (using Web Audio API for swoosh sounds) =====
+  let soundEnabled = true;
+  let audioCtx = null;
+
+  function initAudio() {
+    if (!audioCtx) {
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        soundEnabled = false;
+      }
+    }
+  }
+
+  function playSwoosh() {
+    if (!soundEnabled || !audioCtx) return;
+    try {
+      // White noise burst with filter sweep = swoosh sound
+      const duration = 0.4;
+      const bufferSize = audioCtx.sampleRate * duration;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
+      }
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+      filter.frequency.exponentialRampToValueAtTime(3000, audioCtx.currentTime + duration);
+      filter.Q.value = 2;
+
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + 0.05);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start();
+      noise.stop(audioCtx.currentTime + duration);
+    } catch (e) {}
+  }
+
+  function playClick() {
+    if (!soundEnabled || !audioCtx) return;
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.frequency.value = 600;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.1);
+    } catch (e) {}
+  }
+
+  // Init audio on first interaction
+  document.body.addEventListener('click', initAudio, { once: true });
+
+  // Sound toggle removed — kept disabled by default
+  soundEnabled = false;
+
+  // ===== CUSTOM BROOM CURSOR =====
+  const cursor = document.getElementById('broomCursor');
+  let cursorX = 0, cursorY = 0;
+  let lastDustTime = 0;
+
+  function isTouchDevice() {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  }
+
+  if (!isTouchDevice()) {
+    cursor.classList.add('active');
+    document.body.style.cursor = 'none';
+    // Make all clickable elements still show pointer in CSS — but since we hide cursor entirely, we keep custom one
+    document.addEventListener('mousemove', e => {
+      cursorX = e.clientX;
+      cursorY = e.clientY;
+      cursor.style.left = cursorX + 'px';
+      cursor.style.top = cursorY + 'px';
+
+      // Trail dust occasionally
+      const now = Date.now();
+      if (now - lastDustTime > 80) {
+        lastDustTime = now;
+        const dust = document.createElement('div');
+        dust.className = 'cursor-dust';
+        dust.style.left = (cursorX + (Math.random() - 0.5) * 15) + 'px';
+        dust.style.top = (cursorY + 10 + Math.random() * 8) + 'px';
+        document.body.appendChild(dust);
+        // Animate
+        dust.animate([
+          { opacity: 0.6, transform: 'scale(1)' },
+          { opacity: 0, transform: 'scale(0.3) translateY(15px)' }
+        ], { duration: 600, easing: 'ease-out' }).onfinish = () => dust.remove();
+      }
+    });
+
+    document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+    document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+    document.addEventListener('mouseleave', () => cursor.style.opacity = '0');
+    document.addEventListener('mouseenter', () => cursor.style.opacity = '1');
+  }
+
+  // ===== ENHANCED BROOM SWEEP ANIMATION ON DELETE =====
+  document.querySelectorAll('.broom-input').forEach(input => {
+    let prevValue = input.value;
+    let sweepTimeout = null;
+
+    input.addEventListener('input', () => {
+      const currentValue = input.value;
+      // Trigger sweep when value goes from 2+ chars to 0
+      if (prevValue.length >= 2 && currentValue.length === 0) {
+        triggerSweep(input);
+      }
+      prevValue = currentValue;
+    });
+
+    function triggerSweep(el) {
+      const wrap = el.closest('.input-wrap');
+      if (!wrap) return;
+      const sweep = wrap.querySelector('.broom-sweep');
+      if (!sweep) return;
+      sweep.classList.remove('active');
+      wrap.classList.remove('sweeping');
+      void sweep.offsetWidth;
+      sweep.classList.add('active');
+      wrap.classList.add('sweeping');
+      playSwoosh();
+      clearTimeout(sweepTimeout);
+      sweepTimeout = setTimeout(() => {
+        sweep.classList.remove('active');
+        wrap.classList.remove('sweeping');
+      }, 800);
+    }
+  });
+
+  // ===== LANGUAGE TOGGLE =====
+  const langButtons = document.querySelectorAll('.lang-switch button');
+  langButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const lang = btn.dataset.lang;
+      langButtons.forEach(b => b.classList.toggle('active', b === btn));
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-en]').forEach(el => {
+        const text = el.dataset[lang];
+        if (text && el.children.length === 0) el.textContent = text;
+      });
+    });
+  });
+
+  // ===== ANIMATED COUNTERS =====
+  function animateCounter(el) {
+    const target = parseFloat(el.dataset.target);
+    const isDecimal = target % 1 !== 0;
+    const duration = 1800;
+    const start = performance.now();
+
+    function update(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = target * eased;
+      el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current);
+      if (progress < 1) requestAnimationFrame(update);
+      else el.textContent = isDecimal ? target.toFixed(1) : target;
+    }
+    requestAnimationFrame(update);
+  }
+
+  const counterObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounter(entry.target);
+        counterObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.counter').forEach(c => counterObserver.observe(c));
+
+  // ===== SIMPLE QUOTE REQUEST FORM =====
+  document.getElementById('confirmBooking').addEventListener('click', () => {
+    const name = document.getElementById('bookName').value;
+    const phone = document.getElementById('bookPhone').value;
+    const service = document.getElementById('serviceType').value;
+    if (!name || !phone) {
+      alert('Please fill in your name and phone number.');
+      return;
+    }
+    playSwoosh();
+    document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-success').classList.add('active');
+  });
+
+  function resetBooking() {
+    document.getElementById('serviceType').value = '';
+    document.getElementById('bookName').value = '';
+    document.getElementById('bookPhone').value = '';
+    document.getElementById('bookEmail').value = '';
+    document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+    document.querySelector('.booking-card .booking-step').classList.add('active');
+  }
+
+  // ===== B/A SLIDER =====
+  const baContainer = document.getElementById('baContainer');
+  const baAfter = document.getElementById('baAfter');
+  const baDivider = document.getElementById('baDivider');
+
+  let isDragging = false;
+  function setSliderPosition(x) {
+    const rect = baContainer.getBoundingClientRect();
+    let pct = ((x - rect.left) / rect.width) * 100;
+    pct = Math.max(0, Math.min(100, pct));
+    baAfter.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+    baDivider.style.left = pct + '%';
+  }
+  baContainer.addEventListener('mousedown', e => { isDragging = true; setSliderPosition(e.clientX); });
+  baContainer.addEventListener('touchstart', e => { isDragging = true; setSliderPosition(e.touches[0].clientX); });
+  document.addEventListener('mousemove', e => { if (isDragging) setSliderPosition(e.clientX); });
+  document.addEventListener('touchmove', e => { if (isDragging) setSliderPosition(e.touches[0].clientX); });
+  document.addEventListener('mouseup', () => isDragging = false);
+  document.addEventListener('touchend', () => isDragging = false);
+
+  // BA Projects organized by category (folders)
+  const baProjectsByCategory = {
+    commercial: [
+      { title: 'Office Lobby', desc: 'Commercial space transformation', type: 'photo' },
+      { title: 'Retail Store', desc: 'Recurring service · Photo', type: 'photo' },
+      { title: 'Medical Office', desc: 'Detailed sanitization', type: 'photo' }
+    ],
+    residential: [
+      { title: 'Kitchen Deep Clean', desc: 'Residential home', type: 'photo' },
+      { title: 'Move-out Cleaning', desc: 'Full home reset', type: 'photo' },
+      { title: 'Bathroom Restoration', desc: 'Tile and grout deep clean', type: 'photo' }
+    ],
+    carpet: [
+      { title: 'Carpet Restoration', desc: 'Heavy stain removal · Time-lapse video', type: 'video' },
+      { title: 'Sofa Upholstery', desc: 'Deep extraction', type: 'photo' },
+      { title: 'Stain Removal', desc: 'Pet stains and odors', type: 'photo' }
+    ]
+  };
+
+  let currentCategory = 'commercial';
+  let baProjects = baProjectsByCategory[currentCategory];
+
+  function switchCategory(cat) {
+    currentCategory = cat;
+    baProjects = baProjectsByCategory[cat];
+    // Toggle tabs
+    document.querySelectorAll('.ba-cat-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.cat === cat);
+    });
+    // Toggle thumb groups
+    ['commercial','residential','carpet'].forEach(c => {
+      document.getElementById('thumbs-' + c).style.display = (c === cat) ? 'grid' : 'none';
+    });
+    // Reset to first project of category
+    currentBA = 0;
+    selectBA(0);
+    playClick();
+  }
+
+  function selectBA(idx) {
+    const activeThumbs = document.querySelectorAll('#thumbs-' + currentCategory + ' .ba-thumb');
+    activeThumbs.forEach((t, i) => t.classList.toggle('active', i === idx));
+    document.getElementById('baTitle').textContent = baProjects[idx].title;
+    document.getElementById('baDescription').textContent = baProjects[idx].desc;
+    const beforeLabel = document.getElementById('baBeforeLabel');
+    const afterLabel = document.getElementById('baAfterLabel');
+    if (baProjects[idx].type === 'video') {
+      beforeLabel.textContent = '▶ Video Before';
+      afterLabel.textContent = '▶ Video After';
+    } else {
+      beforeLabel.textContent = 'Photo Before';
+      afterLabel.textContent = 'Photo After';
+    }
+    currentBA = idx;
+    playClick();
+  }
+  let currentBA = 0;
+  function nextBA() { currentBA = (currentBA + 1) % baProjects.length; selectBA(currentBA); }
+  function prevBA() { currentBA = (currentBA - 1 + baProjects.length) % baProjects.length; selectBA(currentBA); }
+
+  // FAQ
+  document.querySelectorAll('.faq-question').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) {
+        item.classList.add('open');
+        playClick();
+      }
+    });
+  });
+
+  // Scroll
+  const nav = document.getElementById('mainNav');
+  const scrollTop = document.getElementById('scrollTop');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 30);
+    scrollTop.classList.toggle('visible', window.scrollY > 600);
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 50);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
