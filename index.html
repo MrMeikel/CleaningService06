@@ -667,9 +667,23 @@
         <div class="subtitle" data-en="✨ We come to you · No obligation" data-es="✨ Vamos a ti · Sin compromiso">✨ We come to you · No obligation</div>
       </div>
 
-      <div class="booking-step active">
+      <!-- 
+        ============================================================
+        NETLIFY FORMS: form envuelto en <form> con atributos especiales
+        ============================================================
+        - name="quote-request": nombre del formulario en el panel de Netlify
+        - data-netlify="true": activa Netlify Forms
+        - netlify-honeypot: protección anti-bot invisible
+        ============================================================
+      -->
+      <form name="quote-request" method="POST" data-netlify="true" netlify-honeypot="bot-field" onsubmit="return handleFormSubmit(event)" class="booking-step active">
+        <input type="hidden" name="form-name" value="quote-request">
+        <p style="display:none;">
+          <label>Don't fill this out: <input name="bot-field"></label>
+        </p>
+
         <label class="booking-label" data-en="What service do you need?" data-es="¿Qué servicio necesitas?">What service do you need?</label>
-        <select class="booking-select" id="serviceType">
+        <select class="booking-select" id="serviceType" name="service">
           <option value="" data-en="Select a service..." data-es="Selecciona...">Select a service...</option>
           <option data-en="🏢 Commercial Cleaning" data-es="🏢 Limpieza Comercial">🏢 Commercial Cleaning</option>
           <option data-en="🏠 Residential Cleaning" data-es="🏠 Limpieza Residencial">🏠 Residential Cleaning</option>
@@ -677,7 +691,7 @@
         </select>
 
         <div class="input-wrap" style="margin-top:0.7rem;">
-          <input type="text" class="booking-input broom-input" id="bookName" placeholder="Full Name *" data-en-placeholder="Full Name *" data-es-placeholder="Nombre Completo *" required>
+          <input type="text" class="booking-input broom-input" id="bookName" name="name" placeholder="Full Name *" data-en-placeholder="Full Name *" data-es-placeholder="Nombre Completo *" required>
           <div class="broom-sweep">
             <span class="broom">🧹</span>
             <span class="dust" style="left:20%;"></span>
@@ -689,7 +703,7 @@
         </div>
 
         <div class="input-wrap">
-          <input type="tel" class="booking-input broom-input" id="bookPhone" placeholder="Phone Number *" data-en-placeholder="Phone Number *" data-es-placeholder="Teléfono *" required>
+          <input type="tel" class="booking-input broom-input" id="bookPhone" name="phone" placeholder="Phone Number *" data-en-placeholder="Phone Number *" data-es-placeholder="Teléfono *" required>
           <div class="broom-sweep">
             <span class="broom">🧹</span>
             <span class="dust" style="left:20%;"></span>
@@ -701,7 +715,7 @@
         </div>
 
         <div class="input-wrap">
-          <input type="email" class="booking-input broom-input" id="bookEmail" placeholder="Email" data-en-placeholder="Email" data-es-placeholder="Correo">
+          <input type="email" class="booking-input broom-input" id="bookEmail" name="email" placeholder="Email" data-en-placeholder="Email" data-es-placeholder="Correo">
           <div class="broom-sweep">
             <span class="broom">🧹</span>
             <span class="dust" style="left:20%;"></span>
@@ -713,7 +727,7 @@
         </div>
 
         <div class="input-wrap">
-          <textarea class="booking-input booking-textarea broom-input" id="bookMessage" rows="4" placeholder="Tell us more (optional) — describe what you need..." data-en-placeholder="Tell us more (optional) — describe what you need..." data-es-placeholder="Cuéntanos más (opcional) — describe lo que necesitas..."></textarea>
+          <textarea class="booking-input booking-textarea broom-input" id="bookMessage" name="message" rows="4" placeholder="Tell us more (optional) — describe what you need..." data-en-placeholder="Tell us more (optional) — describe what you need..." data-es-placeholder="Cuéntanos más (opcional) — describe lo que necesitas..."></textarea>
           <div class="broom-sweep">
             <span class="broom">🧹</span>
             <span class="dust" style="left:20%;"></span>
@@ -725,7 +739,7 @@
         </div>
 
         <div class="booking-buttons" style="flex-direction:column; gap:0.5rem;">
-          <button class="booking-btn booking-btn-next" id="confirmBooking" style="width:100%;" data-en="Request Free Quote ✓" data-es="Solicitar Cotización ✓">Request Free Quote ✓</button>
+          <button type="submit" class="booking-btn booking-btn-next" id="confirmBooking" style="width:100%;" data-en="Request Free Quote ✓" data-es="Solicitar Cotización ✓">Request Free Quote ✓</button>
         </div>
 
         <!-- ============================================================ -->
@@ -733,7 +747,7 @@
         <!-- ============================================================ -->
         <!-- WhatsApp: cambia el número en wa.me/XXXXXXXXXXX (sin +, sin espacios)-->
         <!-- Teléfono: cambia el número en tel:+XXXXXXXXXXX (con + y código país) -->
-        <!-- Email: cambia "meikel_mk@outlook.com" por tu correo real                -->
+        <!-- Email: cambia "hello@example.com" por tu correo real                -->
         <!-- NOTA: Los 3 botones se llenan automáticamente con la info del      -->
         <!--       formulario de arriba si el cliente lo ha llenado             -->
         <div class="hero-contact-buttons" style="display:flex; gap:0.5rem; margin-top:0.7rem;">
@@ -747,7 +761,7 @@
             <span>📞</span> <span data-en="Call" data-es="Llamar">Call</span>
           </button>
         </div>
-      </div>
+      </form>
 
       <div class="booking-step" id="step-success">
         <div class="booking-success">
@@ -1397,7 +1411,7 @@
       <div class="contact-info" style="margin-top:2rem;">
 
         <!-- TELÉFONO -->
-        <a href="tel:+15023774504" class="contact-row" style="text-decoration:none; color:inherit; cursor:pointer; transition:all 0.3s;">
+        <a href="tel:+10000000000" class="contact-row" style="text-decoration:none; color:inherit; cursor:pointer; transition:all 0.3s;">
           <span class="mono" data-en="📞 Phone" data-es="📞 Teléfono">📞 Phone</span>
           <span data-en="Phone — to be added" data-es="Teléfono — por agregar" style="color:#1f5d44; font-weight:700;">Phone — to be added</span>
         </a>
@@ -1405,14 +1419,14 @@
         <!-- WHATSAPP -->
         <!-- Cambia el número en https://wa.me/XXXXXXXXXXX (sin +, sin espacios) -->
         <!-- Ejemplo: si tu WhatsApp es +1 305-555-1234 → https://wa.me/13055551234 -->
-        <a href="https://wa.me/15023774504" target="_blank" class="contact-row" style="text-decoration:none; color:inherit; cursor:pointer; transition:all 0.3s;">
+        <a href="https://wa.me/10000000000" target="_blank" class="contact-row" style="text-decoration:none; color:inherit; cursor:pointer; transition:all 0.3s;">
           <span class="mono">💬 WhatsApp</span>
           <span data-en="WhatsApp — to be added" data-es="WhatsApp — por agregar" style="color:#1f5d44; font-weight:700;">WhatsApp — to be added</span>
         </a>
 
         <!-- EMAIL -->
         <!-- Cambia el href="mailto:..." y el texto al correo real -->
-        <a href="mailto:meikel_mk@outlook.com" class="contact-row" style="text-decoration:none; color:inherit; cursor:pointer; transition:all 0.3s;">
+        <a href="mailto:hello@example.com" class="contact-row" style="text-decoration:none; color:inherit; cursor:pointer; transition:all 0.3s;">
           <span class="mono">✉️ Email</span>
           <span data-en="Email — to be added" data-es="Correo — por agregar" style="color:#1f5d44; font-weight:700;">Email — to be added</span>
         </a>
@@ -1479,12 +1493,12 @@
 <!-- ============================================================ -->
 <!-- ====== EDITAR AQUÍ: BOTÓN FLOTANTE DE WHATSAPP =========== -->
 <!-- ============================================================ -->
-<!-- Cambia el número en https://wa.me/XXXXXXXXXXX (sin +, sin espacios)-->
-<!-- Ejemplo: si tu WhatsApp es +1 305-555-1234 → wa.me/13055551234 -->
+<!-- El número lo toma automáticamente de WHATSAPP_NUMBER (arriba en el JS) -->
+<!-- El mensaje se genera automático al hacer click -->
 <div class="float-actions">
-  <a href="https://wa.me/15023774504" target="_blank" class="float-btn float-whatsapp" aria-label="WhatsApp" style="background:#25D366; color:#ffffff; animation:waPulse 2s infinite;">
+  <button type="button" onclick="floatingWhatsAppClick()" class="float-btn float-whatsapp" aria-label="WhatsApp" style="background:#25D366; color:#ffffff; animation:waPulse 2s infinite; border:none; cursor:pointer;">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/></svg>
-  </a>
+  </button>
   <button class="float-btn scroll-top" id="scrollTop" aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
     <span style="font-size:1.3rem; font-weight:700;">↑</span>
   </button>
@@ -1723,9 +1737,9 @@
   //  EMAIL_ADDRESS:   correo donde recibirás los formularios
   //                   Ejemplo: 'contacto@dortizcleaning.com'
 
-  const WHATSAPP_NUMBER = '15023774504';
-  const PHONE_NUMBER = '+15023774504';
-  const EMAIL_ADDRESS = 'meikel_mk@outlook.com';
+  const WHATSAPP_NUMBER = '10000000000';
+  const PHONE_NUMBER = '+10000000000';
+  const EMAIL_ADDRESS = 'hello@example.com';
 
   // Helper: get all form data
   function getFormData() {
@@ -1782,6 +1796,11 @@
     return isEs ? 'Solicitud de cotización' : 'Quote Request';
   }
 
+  // FLOATING WHATSAPP button: same logic as hero WhatsApp (uses form data if filled)
+  function floatingWhatsAppClick() {
+    sendViaWhatsApp();
+  }
+
   // CHANNEL 1: WhatsApp
   function sendViaWhatsApp() {
     const data = getFormData();
@@ -1807,22 +1826,48 @@
     window.location.href = `tel:${PHONE_NUMBER}`;
   }
 
-  // Main button: "Request Free Quote ✓" → sends via WhatsApp (default)
-  document.getElementById('confirmBooking').addEventListener('click', () => {
+  // Main button: "Request Free Quote ✓"
+  // → Envía a NETLIFY FORMS (email al dueño) + abre WhatsApp con datos
+  // Esta función es llamada por el onsubmit="return handleFormSubmit(event)" del <form>
+  function handleFormSubmit(event) {
+    event.preventDefault(); // evita el submit tradicional para que podamos manejarlo
+
     const data = getFormData();
     if (!data.name || !data.phone) {
       const lang = document.documentElement.lang || 'en';
       alert(lang === 'es'
         ? 'Por favor llena tu nombre y teléfono.'
         : 'Please fill in your name and phone number.');
-      return;
+      return false;
     }
+
     playSwoosh();
+
+    // PASO 1: Enviar a Netlify Forms (email al dueño)
+    const form = event.target;
+    const formData = new FormData(form);
+
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString()
+    })
+    .then(() => {
+      console.log('Netlify Form submitted successfully');
+    })
+    .catch((error) => {
+      console.log('Netlify Form error (but WhatsApp will still work):', error);
+    });
+
+    // PASO 2: Abrir WhatsApp con los datos (como antes)
     sendViaWhatsApp();
-    // Show success state
+
+    // PASO 3: Mostrar mensaje de éxito
     document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
     document.getElementById('step-success').classList.add('active');
-  });
+
+    return false;
+  }
 
   function resetBooking() {
     document.getElementById('serviceType').value = '';
@@ -1831,7 +1876,9 @@
     document.getElementById('bookEmail').value = '';
     document.getElementById('bookMessage').value = '';
     document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
-    document.querySelector('.booking-card .booking-step').classList.add('active');
+    // The form itself is the first step (has class booking-step active)
+    const firstStep = document.querySelector('form[name="quote-request"]');
+    if (firstStep) firstStep.classList.add('active');
   }
 
   // ===== B/A SLIDER =====
